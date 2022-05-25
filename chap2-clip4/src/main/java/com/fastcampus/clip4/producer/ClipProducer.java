@@ -1,5 +1,6 @@
 package com.fastcampus.clip4.producer;
 
+import com.fastcampus.clip4.model.Animal;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaSendCallback;
@@ -12,9 +13,11 @@ import org.springframework.util.concurrent.ListenableFuture;
 public class ClipProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Animal> kafkaJsonTemplate;
 
-    public ClipProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    public ClipProducer(KafkaTemplate<String, String> kafkaTemplate, KafkaTemplate<String, Animal> kafkaJsonTemplate) {
         this.kafkaTemplate = kafkaTemplate;
+        this.kafkaJsonTemplate = kafkaJsonTemplate;
     }
 
     public void async(String topic, String message) {
@@ -32,5 +35,9 @@ public class ClipProducer {
                 System.out.println("Fail to send message. record = " + record);
             }
         });
+    }
+
+    public void async(String topic, Animal animal) {
+        kafkaJsonTemplate.send(topic, animal);
     }
 }
